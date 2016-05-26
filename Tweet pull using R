@@ -1,0 +1,48 @@
+rm(list = ls()) #Clearing the Global Environment
+
+# # install the necessary packages
+# install.packages("twitteR")
+# install.packages("base64enc")
+# install.packages("httpuv")
+
+library("twitteR")
+library("base64enc")
+library("httpuv")
+
+# Register app in Twitter developers with twitter account to get following keys
+# twitter app page: https://apps.twitter.com/
+
+consumer_key <- '' #fill from your Twitter app
+consumer_secret <- ''#fill from your Twitter app
+# access_token <- ' 3414673694-5Nkg5vgUczjzIHLENV7VouHA4pXALKRjXR2IrcB'
+# access_secret <- ' hCJ3tNtRP9t3URC50RyNI6JfgVgslmpBIwaekrLHXV049'
+# setup_twitter_oauth(consumer_key,
+#                     consumer_secret,
+#                     access_token,
+#                     access_secret)
+
+setup_twitter_oauth(consumer_key,
+                    consumer_secret,
+                    NULL,
+                    NULL)
+
+
+r_stats <- searchTwitter("India", n = 500, lang="en", since="2016-05-09") #Pulling tweets:in order - search term, no: of tweets, language, start date
+length(r_stats)
+
+dat <- twListToDF(r_stats) #Converting to data frame for easy use
+write.csv(file='India tweets.csv', x=dat) #Writing data frame to csv
+
+# dat
+# dat$text[1:5]
+
+# dat <- tweets.df[with(tweets.df, order(-retweetCount)), ]
+# sorted_tweets.df <- tweets.df[with(tweets.df, order(col1, col2)), ]
+# sorted_tweets.df = # sorted_tweets.df[1:10,]
+
+library(wordcloud) # routines to create word cloud  
+wordcloud(dat$screenName, dat$retweetCount, min.freq=100)
+
+require(RColorBrewer)
+pal2 <- brewer.pal(8,"Dark2")
+wordcloud(dat$screenName, dat$retweetCount,min.freq=1,max.words=Inf, random.order=FALSE, rot.per=.20, colors=pal2)
